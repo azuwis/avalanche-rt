@@ -745,14 +745,14 @@ Torrent.prototype =
 	{
 		$('#upgrade_icon').addClass('checking');
 		$('#upgrade_text').text(window.lang.about_versioncheck);
-		$.ajax({url: 'remote.php', dataType: 'json', data: {'action':'updatequery'},
+		$.ajax({url: 'update.json', dataType: 'json',
 				success: function(data)
 				{
 					data = $.parseJSON(data);
 					if(!window.settings.release_channel) {
 						window.remote.setSetting('release_channel', 'stable');
 					}
-					if(typeof data!= 'object' || !data.stable)
+					if(typeof data!= 'object' || data === null || !data.stable)
 					{
 						$('#upgrade_icon').addClass('checking');
 						$('#upgrade_text').text(window.lang.about_checkfailed);
