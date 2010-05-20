@@ -139,6 +139,9 @@ $(document).ready( function() {
 			url: 'http://www.google.com/search?hl=en&q=%s+filetype:torrent&btnG=Search'
 		}]
 	};
+	//Load settings saved in cookies
+	var cookies_settings = $.cookies.get('avalance-rt')
+	window.settings = $.extend(window.settings, cookies_settings);
 
 	window.lang = localStorage['lang']?JSON.parse(localStorage['lang']):{open_title:'Open Torrent'}
 
@@ -146,6 +149,8 @@ $(document).ready( function() {
 	//SIDE: We'd love to use getJSON, but getJSON silently fails - which is crap
 	$.ajax({url:'prefs.json', dataType: 'json', success: function(data) {
 		window.settings = $.extend(window.settings,data);
+		//Load settings from cookies again
+		window.settings = $.extend(window.settings, cookies_settings);
 		//We should get our language variables:
 		//Load our language variable:
 		$.ajax({url:'lang/'+ (window.settings.default_language || 'en-gb')+ '.json', dataType: 'json',
@@ -163,6 +168,9 @@ $(document).ready( function() {
 						'.json'+ "\n\n"+ status+ "\n\n"+ error).focus().select();
 			}
 		});
+
+		//Set data to window.settings, as we merge windows.settings with settings from cookies
+		data = window.settings;
 
 		//If the details pane has a setting telling it to close, close it.
 		if(data.detail_pane_open==false || data.detail_pane_open=='false')

@@ -520,7 +520,6 @@ Remote.prototype =
 	{
 		var act = action ? 'remove' : 'set';
 		var write = false;
-		var settings = window.settings;
 
 		switch(key) {
 			case '':
@@ -528,30 +527,31 @@ Remote.prototype =
 			default:
 				if(act === 'remove')
 				{
-					delete settings[key];
+					delete window.settings[key];
 					write = true;
 				}
 				else if(act === 'set')
 				{
-					settings[key] = value;
+					window.settings[key] = value;
 					write = true;
 				}
 				break;
 		}
 		if(write) {
-			window.settings = settings;
 			var date = new Date();
-			date.setTime(date.getTime() + 86400000);
-			$.cookies.set('avalance-rt', [
-				settings['detail_pane_width'],
-				settings['default_filter_by'],
-				settings['default_zoom'],
-				settings['detail_pane_open'],
-				settings['default_sort'],
-				settings['default_sort_by']
-				], {'expiresAt' : date});
-			$.cookies.set('settings', "aaa");
-			if(func){ func(settings); }
+			var expire_offset = window.settings['cookies_expire_offset'] || 86400000;
+			date.setTime(date.getTime() + expire_offset);
+			// only save related window.settings to cookies
+			$.cookies.set('avalance-rt', {
+				'default_sort' : window.settings['default_sort'],
+				'default_sort_by' : window.settings['default_sort_by'],
+				'detail_pane_open' : window.settings['detail_pane_open'],
+				'detail_pane_width' : window.settings['detail_pane_width'],
+				'default_filter_by' : window.settings['default_filter_by'],
+				'default_zoom' : window.settings['default_zoom'],
+				'update_check' : window.settings['update_check']
+				}, {'expiresAt' : date});
+			if(func){ func(window.settings); }
 		}
 	}
 
