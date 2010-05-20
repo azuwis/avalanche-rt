@@ -196,7 +196,6 @@ $(document).ready( function() {
 		{
 			torrent.updateCheck();
 			window.remote.setSetting('update_check', day.getDate());
-			console.log('updated');
 		}
 
 		if(data.default_zoom==2) { torrent.zoomTorrents(null,'out'); }
