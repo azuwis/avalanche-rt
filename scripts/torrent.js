@@ -2128,7 +2128,7 @@ Torrent.prototype =
 		uri = uri[0]=='http:'?uri[2]:uri[0];
 		$('#web_search_dropdown').css('background-image',
 			'url("http://www.google.com/s2/favicons?domain='+ uri+ '")');
-		$('#web_search_dropdown').attr('title',event.currentTarget.innerHTML);
+		$('#web_search_dropdown').attr('title',e.currentTarget.innerHTML);
 		$('#web_search_menu').hide();
 		$('#web_search').attr('search_string',url).focus().select();
 	},
