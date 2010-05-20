@@ -427,7 +427,7 @@ xmlrpc_client.prototype.send = function (msg, timeout, method)
 
 	/// @todo add support for setting cookies by hand
 
-	httpconn.setRequestHeader('User-Agent', user_agent);
+	httpconn.setRequestHeader('User-Agent', this.user_agent);
 	httpconn.setRequestHeader('Content-type', msg.content_type);
 	if (!this.keepalive)
 	{
