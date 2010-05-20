@@ -502,7 +502,7 @@ Remote.prototype =
 	 */
 	openURL: function(url, func, start)
 	{
-		var command = start=='true'?'load_start_verbose':'load_verbose';
+		var command = (start==true)?'load_start_verbose':'load_verbose';
 
 		var message = new xmlrpcmsg(command, [ new xmlrpcval(url) ]);
 
@@ -510,7 +510,6 @@ Remote.prototype =
 			return {'openurl' : resp==0?true:false};
 		};
 
-		this.getRpc().setDebug(2);
 		this.getRpc().send(message, 0, function (resp) {
 			remote.request_x(func, decode, resp);
 		});
