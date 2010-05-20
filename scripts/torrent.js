@@ -555,6 +555,17 @@ Torrent.prototype =
 		return false;
 	},
 
+
+	prepareOpenTorrent: function (files)
+	{
+		if (files.length !== 1) return;
+		var reader = new FileReader();
+		reader.onloadend = function(e) {
+			torrent.torrentData = e.target.result;
+		};
+		reader.readAsBinaryString(files[0]);
+	},
+
 	/*
  * openTorrent
  *
@@ -567,25 +578,12 @@ Torrent.prototype =
 		//We've been asked to open a file:
 		if($('#open_dialogue .tab.l').hasClass('a'))
 		{
-			$('#open_iframe').load(function(){
-				result = $.parseJSON($(this).contents().find('body').html());
-				if(result.openfile)
-				{
-						$('#open_dialogue .decoration').addClass('good').
-							children('h2').text(window.lang.open_title_success);
-						$('#open_dialogue .buttonset').hide().
-							filter('#open_dialogue .buttonset.done').show();
-				}
-				else
-				{
-						$('#open_dialogue .decoration').addClass('bad').
-							children('h2').text(window.lang.open_title_error);
-						$('#open_dialogue .buttonset').hide().
-							filter('#open_dialogue .buttonset.done').show();
-				}
-			});
+			if (torrent.torrentData === undefined) { return false; }
+			$('#torrent_upload_file').val("");
 
-			$('#open_file').submit();
+			var done = false;
+
+			//Change the UI to a "loading" dialogue
 			$('#open_dialogue .window').slideUp(125);
 			$('#open_dialogue').animate({marginTop:'-'+
 				(($('#open_dialogue').height() -
@@ -595,6 +593,63 @@ Torrent.prototype =
 				filter('#open_dialogue .buttonset.loading').show();
 			$('#open_dialogue .decoration h2').text(window.lang.open_title_opening);
 
+			//Set an "opening" timeout so the users knows his torrent hasnt opened.
+			window.openFailTimer = setTimeout(function()
+			{
+				$('#open_dialogue .decoration').addClass('bad').
+					children('h2').text(window.lang.open_title_error);
+				$('#open_dialogue .buttonset').hide().
+					filter('#open_dialogue .buttonset.done').show();
+				$('#open_dialogue .buttonset.done button').focus();
+				clearTimeout(window.openFailTimer);
+				delete window.openFailTimer;
+			}, (settings.refresh_delay * 10)+ 100);
+
+			//Set a timer that checks every refresh delay to see if it opened
+			window.openSuccessFunc = function()
+			{
+				window.openSuccessTimer = setTimeout(function()
+				{
+					//One more torrent has been added. We can celebrate!
+					if(done)
+					{
+						clearTimeout(window.openFailTimer);
+						delete window.openFailTimer;
+						clearTimeout(window.openSuccessTimer);
+						delete window.openSuccessTimer;
+						delete window.openSuccessFunc;
+						$('#torrent_upload_url').val('');
+						$('#open_dialogue .decoration').addClass('good').
+							children('h2').text(window.lang.open_title_success);
+						$('#open_dialogue .buttonset').hide().
+							filter('#open_dialogue .buttonset.done').show();
+						$('#open_dialogue .buttonset.done button').focus();
+					}
+					//Same old torrent count. Keep it going...
+					else
+					{
+						window.openSuccessFunc();
+					}
+				}, 1000);
+			}
+
+			window.openSuccessFunc();
+
+			remote.openFile(
+				torrent.torrentData, //The File
+				function(){
+					if(remote.json.openfile)
+					{
+						done = true;
+					}
+					else
+					{
+	//					console.log('Error, could not load url: '+ $('#torrent_upload_url').val());
+					}
+				},
+					$('#torrent_upload_start').attr('checked') //To start automatically or not
+			);
+			torrent.torrentData = undefined;
 		}
 		//We've been asked to open a URL
 		else if($('#open_dialogue .tab.f').hasClass('a'))
@@ -611,6 +666,61 @@ Torrent.prototype =
 						//rtorrent does with it, so we have to play the waiting game...
 
 						//Change the UI to a "loading" dialogue
+						//Change the UI to a "loading" dialogue
+						$('#open_dialogue .window').slideUp(125);
+						$('#open_dialogue').animate({marginTop:'-'+
+							(($('#open_dialogue').height() -
+								$('#open_dialogue .window').outerHeight(true)) / 2)+ 'px'},125);
+
+						$('#open_dialogue .buttonset').hide().
+							filter('#open_dialogue .buttonset.loading').show();
+						$('#open_dialogue .decoration h2').text(window.lang.open_title_opening);
+
+						//Set an "opening" timeout so the users knows his torrent hasnt opened.
+						window.openFailTimer = setTimeout(function()
+						{
+							$('#open_dialogue .decoration').addClass('bad').
+								children('h2').text(window.lang.open_title_error);
+							$('#open_dialogue .buttonset').hide().
+								filter('#open_dialogue .buttonset.done').show();
+							$('#open_dialogue .buttonset.done button').focus();
+							clearTimeout(window.openFailTimer);
+							delete window.openFailTimer;
+						}, (settings.refresh_delay * 10)+ 100);
+
+						//Set a timer that checks every refresh delay to see if it opened
+						window.openSuccessFunc = function()
+						{
+							window.openSuccessTimer = setTimeout(function()
+							{
+								//One more torrent has been added. We can celebrate!
+								if(window.torrentcount &&
+										window.torrentcount < parseInt($('#status_torrent_count').text()))
+								{
+									clearTimeout(window.openFailTimer);
+									delete window.openFailTimer;
+									clearTimeout(window.openSuccessTimer);
+									delete window.openSuccessTimer;
+									delete window.openSuccessFunc;
+									$('#torrent_upload_url').val('');
+									$('#open_dialogue .decoration').addClass('good').
+										children('h2').text(window.lang.open_title_success);
+									$('#open_dialogue .buttonset').hide().
+										filter('#open_dialogue .buttonset.done').show();
+									$('#open_dialogue .buttonset.done button').focus();
+								}
+								//Same old torrent count. Keep it going...
+								else
+								{
+									window.torrentcount = parseInt($('#status_torrent_count').text());
+									window.openSuccessFunc();
+								}
+							}, 1000);
+						}
+
+						window.torrentcount = parseInt($('#status_torrent_count').text());
+						window.openSuccessFunc();
+
 						$('#open_dialogue .window').slideUp(125);
 						$('#open_dialogue').animate({marginTop:'-'+
 							(($('#open_dialogue').height() -

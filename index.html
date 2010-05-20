@@ -426,7 +426,7 @@
 						<form id="open_file" name="open_file" action="torrenthandler.php"
 							target="open_iframe" method="post" enctype="multipart/form-data">
 								<input type="file" maxfilesize="768" name="torrent_upload_file"
-									id="torrent_upload_file" style="width:276px">
+									id="torrent_upload_file" style="width:276px" onChange="torrent.prepareOpenTorrent(this.files)">
 								<input type="hidden" name="type" value="file">
 						</form>
 					</div>

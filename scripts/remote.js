@@ -515,6 +515,24 @@ Remote.prototype =
 		});
 	},
 
+	/*
+	 * Open a torrent File
+	 */
+	openFile: function(file, func, start)
+	{
+		var command = (start==true)?'load_raw_start':'load_raw';
+
+		var message = new xmlrpcmsg(command, [ new xmlrpcval(file, "base64") ]);
+
+		var decode = function (resp) {
+			return {'openfile' : resp==0?true:false};
+		};
+
+		this.getRpc().send(message, 0, function (resp) {
+			remote.request_x(func, decode, resp);
+		});
+	},
+
 	setSetting: function(key, value, value2, action, func)
 	{
 		var act = action ? 'remove' : 'set';
