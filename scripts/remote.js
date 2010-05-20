@@ -63,6 +63,21 @@ Remote.prototype =
 	},
 
 	/*
+	 * Get total diskspace of torrent
+	 */
+	getTotalDiskspace: function(name)
+	{
+		var diskspace = undefined;
+		$.each(window.settings.total_diskspace, function(i, entry){
+			if(name.match('^' + entry.path)) {
+				diskspace = entry.size;
+				return false;
+			};
+		});
+		return diskspace;
+	},
+
+	/*
 	 * Retrieve Main Torrent List
 	 */
 	retrieve: function(func)
@@ -120,7 +135,7 @@ Remote.prototype =
 					'base_path' : torrent[14],
 					//Remember the bug above? We're going to mangle this a bit...
 					'free_diskspace' : torrent[15],
-					'total_diskspace' : window.settings.total_diskspace,
+					'total_diskspace' : remote.getTotalDiskspace(torrent[14]),
 					'private' : torrent[16],
 					'tracker_status' : torrent[17],
 					'priority' : torrent[18],

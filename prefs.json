@@ -1,5 +1,8 @@
 {
-	"total_diskspace": 58312667136,
+	"total_diskspace": [{
+		"path": "/mnt/data/",
+		"size": 58312667136
+	}],
 	"cookies_expire_offset": 86400000,
 	"refresh_delay": 4000,
 	"default_sort": "new_name",
