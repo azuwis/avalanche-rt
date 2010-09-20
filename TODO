@@ -1,2 +1,2 @@
-* use html5 file api to handle raw torrent file
+* use html5 file api to handle raw torrent file -- DONE
 * allow change refresh_delay from webui
