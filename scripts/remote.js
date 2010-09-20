@@ -507,7 +507,8 @@ Remote.prototype =
 			}
 			else
 			{
-				console.log('Error: Could not '+ func+ '('+ id+ '): '+ data.error);
+				if (window.console && typeof window.console.log == 'function')
+					console.log('Error: Could not '+ func+ '('+ id+ '): '+ data.error);
 			}
 		});
 	},
