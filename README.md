@@ -1,4 +1,4 @@
-A fork of [avalanche-rt][1] which only require the xml-rpc interface of rtorrent, suitable for low resource devices such as routers.
+A fork of [avalanche-rt][1] which only require the xml-rpc interface of rtorrent, suitable for low resource devices such as home use routers.
 
 Avalanche-rt is a really good web frontend for rtorrent. The original one ran pretty good on my router, except that php eat a lot of memory and nearly all CPU.
 
