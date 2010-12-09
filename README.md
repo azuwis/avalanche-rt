@@ -11,6 +11,6 @@ Some detail of differences from original avalanche-rt:
 
 Note that upstream may include this in future release, see [here][3].
 
-[1]: http://github.com/azuwis/avalanche-rt
+[1]: http://code.google.com/p/avalanche-rt/
 [2]: http://phpxmlrpc.sourceforge.net/jsxmlrpc/
 [3]: http://code.google.com/p/avalanche-rt/issues/detail?id=10
